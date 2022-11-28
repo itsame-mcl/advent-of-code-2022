@@ -114,8 +114,20 @@ venv.bak/
 .spyderproject
 .spyproject
 
+# PyCharm project settings
+/.idea/.gitignore
+/.idea/advent-of-code-2022.iml
+/.idea/sonarlint/issuestore/index.pb
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/vcs.xml
+
 # Rope project settings
 .ropeproject
+
+# Wakatime anonymous project name
+/.wakatime-project
 
 # mkdocs documentation
 /site
