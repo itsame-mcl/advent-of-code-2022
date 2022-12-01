@@ -1,6 +1,7 @@
 import unittest
 import src.day01_calorie_counting.part1_2 as src
 
+
 class TestDay1(unittest.TestCase):
     def test_part1_with_sample(self):
         res = src.max_calories("day01_calorie_counting/sample_part1_2.txt")
