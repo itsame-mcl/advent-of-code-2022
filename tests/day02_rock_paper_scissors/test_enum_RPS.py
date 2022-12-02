@@ -24,6 +24,9 @@ class TestEnumChoice(unittest.TestCase):
     def test_gt(self):
         self.assertEqual(self.expected_gt, self.first > self.second)
 
+    def test_not_implemented(self):
+        self.assertRaises(TypeError, lambda x: x < 0, self.first)
+
 
 if __name__ == '__main__':
     unittest.main()

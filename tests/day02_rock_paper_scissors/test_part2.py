@@ -7,9 +7,12 @@ class TestDay2Part2(unittest.TestCase):
         res = game_engine("day02_rock_paper_scissors/sample_part1_2.txt")
         self.assertEqual(12, res)
 
-    def test_part1_with_input(self):
+    def test_part2_with_input(self):
         res = game_engine("day02_rock_paper_scissors/input_part1_2.txt")
         self.assertEqual(9975, res)
+
+    def test_part2_fail(self):
+        self.assertRaises(ValueError, game_engine, "day02_rock_paper_scissors/fail_part2.txt")
 
 
 if __name__ == '__main__':
