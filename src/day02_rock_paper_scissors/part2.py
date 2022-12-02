@@ -22,6 +22,7 @@ def game_engine(path):
                         player = Choice(strategy[opponent].value + 1)
                 case _:
                     raise ValueError
+            # noinspection PyTypeChecker
             outcome += player.value + 6 * (player > strategy[opponent]) + \
                 3 * (player == strategy[opponent])
     return outcome
