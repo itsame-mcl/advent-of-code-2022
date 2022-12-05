@@ -15,15 +15,12 @@ def top_crates(path, block=False):
                 stacks[i].put_nowait(line[i*4 + 1])
     for line in operations:
         operation = line.split(" ")
-        if block:
-            block_items = []
-            for _ in range(0, int(operation[1])):
-                block_items.append(stacks[int(operation[3])-1].get_nowait())
-            for item in reversed(block_items):
-                stacks[int(operation[5]) - 1].put_nowait(item)
-        else:
-            for _ in range(0, int(operation[1])):
-                stacks[int(operation[5])-1].put_nowait(stacks[int(operation[3])-1].get_nowait())
+        block_items = []
+        for _ in range(0, int(operation[1])):
+            block_items.append(stacks[int(operation[3]) - 1].get_nowait())
+        block_items = reversed(block_items) if block else block_items
+        for item in block_items:
+            stacks[int(operation[5]) - 1].put_nowait(item)
     for stack in stacks:
         outcome += stack.get_nowait()
     return outcome
