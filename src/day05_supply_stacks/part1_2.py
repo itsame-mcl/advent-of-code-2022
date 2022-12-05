@@ -1,7 +1,7 @@
 from queue import LifoQueue
 
 
-def top_crates(path):
+def top_crates(path, block=False):
     outcome = ""
     with open(path) as file:
         input_data = list(map(lambda l: l.replace('\n', ''), file.readlines()))
@@ -15,8 +15,15 @@ def top_crates(path):
                 stacks[i].put_nowait(line[i*4 + 1])
     for line in operations:
         operation = line.split(" ")
-        for _ in range(0, int(operation[1])):
-            stacks[int(operation[5])-1].put_nowait(stacks[int(operation[3])-1].get_nowait())
+        if block:
+            block_items = []
+            for _ in range(0, int(operation[1])):
+                block_items.append(stacks[int(operation[3])-1].get_nowait())
+            for item in reversed(block_items):
+                stacks[int(operation[5]) - 1].put_nowait(item)
+        else:
+            for _ in range(0, int(operation[1])):
+                stacks[int(operation[5])-1].put_nowait(stacks[int(operation[3])-1].get_nowait())
     for stack in stacks:
         outcome += stack.get_nowait()
     return outcome
