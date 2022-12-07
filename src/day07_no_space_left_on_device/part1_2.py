@@ -19,7 +19,7 @@ def generate_tree(path):
                     pass  # Ignore command, as the next lines of the input will be the output of ls
                 case ["dir", directory]:
                     Node(directory, parent=current_dir, type="dir", size=None)
-                case [filesize, filename] if filesize not in ["dir"]:
+                case [filesize, filename] if filesize.isnumeric():
                     Node(filename, parent=current_dir, type="file", size=int(filesize))
     return root
 
