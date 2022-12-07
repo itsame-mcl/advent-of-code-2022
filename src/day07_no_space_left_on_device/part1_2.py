@@ -7,7 +7,7 @@ def generate_tree(path):
     current_dir = root
     with open(path) as file:
         for line in file:
-            command = line.replace('\n','').split(' ')
+            command = line.replace('\n', '').split(' ')
             match command:
                 case ["$", "cd", ".."]:
                     current_dir = current_dir.parent
@@ -16,11 +16,11 @@ def generate_tree(path):
                 case ["$", "cd", directory]:
                     current_dir = [node for node in current_dir.children if node.name == directory][0]
                 case ["$", "ls"]:
-                    pass # Ignore command, as the next lines of the input will be the output of ls
+                    pass  # Ignore command, as the next lines of the input will be the output of ls
                 case ["dir", directory]:
                     Node(directory, parent=current_dir, type="dir", size=None)
                 case [filesize, filename]:
-                    Node(filename, parent=current_dir, type="file", size=filesize)
+                    Node(filename, parent=current_dir, type="file", size=int(filesize))
     return root
 
 
@@ -29,7 +29,7 @@ def compute_dir_size(node):
     for child in node.children:
         if child.type == 'dir':
             child = compute_dir_size(child)
-        total_size += int(child.size)
+        total_size += child.size
     node.size = total_size
     return node
 
