@@ -25,6 +25,8 @@ class Head(AbstractKnot):
                 self.x += 1
             case 'R':
                 self.x -= 1
+            case _:
+                raise ValueError
 
 
 class Knot(AbstractKnot):

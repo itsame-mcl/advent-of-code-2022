@@ -7,6 +7,9 @@ class TestDay9(unittest.TestCase):
     def setUp(self):
         self.dirname = os.path.dirname(__file__)
 
+    def test_with_invalid_sample(self):
+        self.assertRaises(ValueError, visited_positions, os.path.join(self.dirname, "invalid_sample.txt"), 2)
+
     def test_part1_with_sample(self):
         res = visited_positions(os.path.join(self.dirname, "sample_part1.txt"), 2)
         self.assertEqual(13, res)
