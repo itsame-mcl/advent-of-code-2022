@@ -5,11 +5,12 @@ def do_cycles(path):
     with open(path) as file:
         for line in file:
             instruction = line.replace('\n', '').split(' ')
-            states[str(cycle + 1)] = register
             match instruction:
                 case ['noop']:
+                    states[str(cycle + 1)] = register
                     cycle += 1
                 case ['addx', value] if value.lstrip('-').isnumeric():
+                    states[str(cycle + 1)] = register
                     states[str(cycle + 2)] = register
                     cycle += 2
                     register += int(value)
@@ -27,8 +28,7 @@ def draw_crt(path):
     crt = str()
     for line in range(0, 6):
         for position in range(1, 41):
-            sprite = [states[str(line*40+position)], states[str(line*40+position)]+1, states[str(line*40+position)]+2]
-            if position in sprite:
+            if position in range(states[str(line*40+position)], states[str(line*40+position)]+3):
                 crt += '#'
             else:
                 crt += '.'
