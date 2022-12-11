@@ -1,5 +1,5 @@
 import unittest
-from src.day11_monkey_in_the_middle.monkey import MonkeyController
+from src.day11_monkey_in_the_middle.part1_2 import MonkeyController
 
 
 class TestDay11Part1(unittest.TestCase):
