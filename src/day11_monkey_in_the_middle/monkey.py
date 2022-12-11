@@ -31,15 +31,17 @@ class Monkey:
             self.inspect_item(item)
 
 
-class ZNMonkey(Monkey):
+class ZNZMonkey(Monkey):
     def inspect_item(self, item):
         match self.operation.split(" "):
-            case ["+", value]:
+            case["+", value]:
                 item.add(int(value))
-            case ["*", value]:
+            case["*", value]:
                 item.multiply(int(value))
-            case ["^", value]:
+            case["^", value]:
                 item.power(int(value))
+            case _:
+                raise ValueError
         other = self.if_true if item.get_value(self.divisible_by) == 0 else self.if_false
         self.throw_to_other(deepcopy(item), other)
         self.items.remove(item)
@@ -47,14 +49,14 @@ class ZNMonkey(Monkey):
 
 
 class MonkeyController:
-    def __init__(self, worry_decrease=True, zn_monkeys=False):
+    def __init__(self, worry_decrease=True, znz_monkeys=False):
         self.monkeys = []
         self.worry_decrease = worry_decrease
-        self.zn_monkeys = zn_monkeys
+        self.zn_monkeys = znz_monkeys
 
     def add_monkey(self, items, operation, divisible_by, if_true, if_false):
         if self.zn_monkeys:
-            new_monkey = ZNMonkey(self, items, operation, divisible_by, if_true, if_false)
+            new_monkey = ZNZMonkey(self, items, operation, divisible_by, if_true, if_false)
 
         else:
             new_monkey = Monkey(self, items, operation, divisible_by, if_true, if_false)
@@ -63,8 +65,8 @@ class MonkeyController:
     def get_monkey(self, index):
         return self.monkeys[index]
 
-    def do_rounds(self, n = 1):
-        for _ in range(0,n):
+    def do_rounds(self, n=1):
+        for _ in range(0, n):
             for monkey in self.monkeys:
                 monkey.inspect_all_items()
 

@@ -1,7 +1,7 @@
 from math import pow
 
 
-class ZNInteger:
+class ZNZInteger:
     def __init__(self, integer, dividers):
         self.zn_value = {}
         for divider in dividers:
@@ -17,7 +17,7 @@ class ZNInteger:
 
     def power(self, integer):
         for divider, value in self.zn_value.items():
-            self.zn_value[divider] =  pow(value, integer) % int(divider)
+            self.zn_value[divider] = pow(value, integer) % int(divider)
 
     def get_value(self, divider):
         return self.zn_value[divider]
