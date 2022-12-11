@@ -33,4 +33,5 @@ def draw_crt(path):
             else:
                 crt += '.'
         crt += '\n'
+
     return crt
