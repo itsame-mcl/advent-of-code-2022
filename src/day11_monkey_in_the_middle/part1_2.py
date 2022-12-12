@@ -1,4 +1,4 @@
-from numpy import prod
+import numpy as np
 
 
 class Monkey:
@@ -19,9 +19,9 @@ class Monkey:
         other_monkey.catch_from_other(item)
 
     def inspect_item(self, item):
-        new = self.operation(item)
-        new = new//3 if self.group.worry_decrease else new
-        new = new % prod([monkey.divisible_by for monkey in self.group.monkeys])
+        new = np.int64(self.operation(item))
+        new = np.int64(new//3) if self.group.worry_decrease else new
+        new = np.int64(new % np.prod([monkey.divisible_by for monkey in self.group.monkeys]))
         other = self.if_true if new % self.divisible_by == 0 else self.if_false
         self.throw_to_other(new, other)
         self.items.remove(item)
