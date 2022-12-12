@@ -22,24 +22,26 @@ def create_graph(path):
     return graph
 
 
-def add_edges(graph : nx.DiGraph):
+def is_accessible(graph, node, other):
+    return graph.has_node(other) and (graph.nodes[node]['altitude'].lower() >= graph.nodes[other]['altitude'].lower() or
+                                      next_lower_letter(graph.nodes[node]['altitude']) ==
+                                      graph.nodes[other]['altitude'].lower())
+
+
+def add_edges(graph: nx.DiGraph):
     for node in graph.nodes:
-        if graph.has_node(node - 1) and (graph.nodes[node]['altitude'].lower() >= graph.nodes[node - 1]['altitude'].lower() or
-                                         next_lower_letter(graph.nodes[node]['altitude']) == graph.nodes[node - 1]['altitude'].lower()):
+        if is_accessible(graph, node, node - 1):
             graph.add_edge(node, node - 1)
-        if graph.has_node(node + 1j) and (graph.nodes[node]['altitude'].lower() >= graph.nodes[node + 1j]['altitude'].lower() or
-                                          next_lower_letter(graph.nodes[node]['altitude']) == graph.nodes[node + 1j]['altitude'].lower()):
+        if is_accessible(graph, node, node + 1j):
             graph.add_edge(node, node + 1j)
-        if graph.has_node(node + 1) and (graph.nodes[node]['altitude'].lower() >= graph.nodes[node + 1]['altitude'].lower() or
-                                         next_lower_letter(graph.nodes[node]['altitude']) == graph.nodes[node + 1]['altitude'].lower()):
+        if is_accessible(graph, node, node + 1):
             graph.add_edge(node, node + 1)
-        if graph.has_node(node - 1j) and (graph.nodes[node]['altitude'].lower() >= graph.nodes[node - 1j]['altitude'].lower() or
-                                          next_lower_letter(graph.nodes[node]['altitude']) == graph.nodes[node - 1j]['altitude'].lower()):
+        if is_accessible(graph, node, node - 1j):
             graph.add_edge(node, node - 1j)
     return graph
 
 
-def find_shortest_path(path, multiple_starts = False):
+def find_shortest_path(path, multiple_starts=False):
     graph = create_graph(path)
     graph = add_edges(graph)
     if multiple_starts:
