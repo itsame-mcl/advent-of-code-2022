@@ -2,10 +2,6 @@ from ast import literal_eval
 from functools import cmp_to_key
 
 
-def cmp(left, right):
-    return (left > right) - (left < right)
-
-
 def compare_values(left, right):
     index = 0
     while True:
@@ -21,23 +17,23 @@ def compare_values(left, right):
             right_is_list = isinstance(right[index], list)
         except IndexError:
             right_is_out_of_items = True
-        match [left_is_out_of_items, right_is_out_of_items]:
-            case [True, True]:
+        match[left_is_out_of_items, right_is_out_of_items]:
+            case[True, True]:
                 return 0
-            case [True, False]:
+            case[True, False]:
                 return -1
-            case [False, True]:
+            case[False, True]:
                 return 1
             case _:
-                match [left_is_list, right_is_list]:
-                    case [True, True]:
+                match[left_is_list, right_is_list]:
+                    case[True, True]:
                         res = compare_values(left[index], right[index])
-                    case [True, False]:
+                    case[True, False]:
                         res = compare_values(left[index], [right[index]])
-                    case [False, True]:
+                    case[False, True]:
                         res = compare_values([left[index]], right[index])
                     case _:
-                        res = cmp(left[index], right[index])
+                        res = (left[index] > right[index]) - (left[index] < right[index])
         if res != 0:
             return res
         index += 1
