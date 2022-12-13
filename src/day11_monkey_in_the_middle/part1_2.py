@@ -1,6 +1,3 @@
-import numpy as np
-
-
 class Monkey:
     def __init__(self, group, items, operation, divisible_by, if_true, if_false):
         self.inspected = 0
@@ -19,9 +16,9 @@ class Monkey:
         other_monkey.catch_from_other(item)
 
     def inspect_item(self, item):
-        new = np.int64(self.operation(item))
-        new = np.int64(new//3) if self.group.worry_decrease else new
-        new = np.int64(new % np.prod([monkey.divisible_by for monkey in self.group.monkeys]))
+        new = self.operation(item)
+        new = new//3 if self.group.worry_decrease else new
+        new = new % self.group.modulo
         other = self.if_true if new % self.divisible_by == 0 else self.if_false
         self.throw_to_other(new, other)
         self.items.remove(item)
@@ -35,11 +32,13 @@ class Monkey:
 class MonkeyController:
     def __init__(self, worry_decrease=True):
         self.monkeys = []
+        self.modulo = 1
         self.worry_decrease = worry_decrease
 
     def add_monkey(self, items, operation, divisible_by, if_true, if_false):
         new_monkey = Monkey(self, items, operation, divisible_by, if_true, if_false)
         self.monkeys.append(new_monkey)
+        self.modulo = self.modulo * divisible_by
 
     def get_monkey(self, index):
         return self.monkeys[index]
