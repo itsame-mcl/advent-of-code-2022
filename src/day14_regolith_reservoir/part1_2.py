@@ -18,14 +18,10 @@ def populate_rocks(path):
         rocks = set()
         for line in file:
             line = line.replace('\n', '').split(' -> ')
-            if len(line) == 1:
-                rock = line[0].split(',')
-                rocks.add(int(rock[0])+int(rock[1])*1j)
-            else:
-                for i in range(1, len(line)):
-                    first = line[i-1].split(',')
-                    second = line[i].split(',')
-                    rocks.update(compute_rocks_between(first, second))
+            for i in range(1, len(line)):
+                first = line[i-1].split(',')
+                second = line[i].split(',')
+                rocks.update(compute_rocks_between(first, second))
     return rocks
 
 
