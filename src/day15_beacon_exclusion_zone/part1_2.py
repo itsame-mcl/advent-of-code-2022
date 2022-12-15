@@ -1,5 +1,5 @@
 from re import findall
-from itertools import chain
+from shapely import Polygon, LineString, unary_union
 
 
 def manhattan_distance(first, second):
@@ -18,46 +18,48 @@ def single_row_exclusion(sensor, distance, row, output_as_range=True):
         return None
 
 
-def compute_single_row_exclusion(path, row):
+def construct_polygons(path):
+    polygons = list()
     with open(path) as file:
-        excluded = list()
-        included = set()
+        for line in file:
+            positions = findall(r'-?\d+', line)
+            sensor = int(positions[0])+int(positions[1])*1j
+            beacon = int(positions[2])+int(positions[3])*1j
+            distance = manhattan_distance(sensor, beacon)
+            polygon = Polygon([(sensor.real-distance, sensor.imag),
+                               (sensor.real, sensor.imag+distance),
+                               (sensor.real+distance, sensor.imag),
+                               (sensor.real, sensor.imag-distance)])
+            polygons.append(polygon)
+    return polygons
+
+
+def compute_single_row_exclusion(path, row):
+    polygons = unary_union(construct_polygons(path))
+    with open(path) as file:
+        x_min = None
+        x_max = None
+        sensors_on_y = set()
         for line in file:
             positions = findall(r'-?\d+', line)
             sensor = int(positions[0])+int(positions[1])*1j
             beacon = int(positions[2])+int(positions[3])*1j
             if int(beacon.imag) == row:
-                included.add(int(beacon.real))
+                sensors_on_y.add(beacon.real)
             distance = manhattan_distance(sensor, beacon)
-            new_excluded_range = single_row_exclusion(sensor, distance, row)
-            if new_excluded_range:
-                excluded.append(new_excluded_range)
-    excluded = set(chain.from_iterable(excluded))
-    excluded.difference_update(included)
-    return len(excluded)
+            if not x_min or sensor.real - distance < x_min:
+                x_min = sensor.real - distance
+            if not x_max or sensor.real+distance > x_max:
+                x_max = sensor.real + distance
+        target_row = LineString([(x_min, row), (x_max, row)])
+        inter = polygons.intersection(target_row)
+    return inter.length + 1 - len(sensors_on_y)
 
 
 def find_distress_beacon(path, x_y_max):
-    sensors = []
-    beacons = []
-    with open(path) as file:
-        for line in file:
-            positions = findall(r'-?\d+', line)
-            sensors.append(int(positions[0])+int(positions[1])*1j)
-            beacons.append(int(positions[2])+int(positions[3])*1j)
-    for y in range(x_y_max+1):
-        excluded = list()
-        for sensor, beacon in zip(sensors, beacons):
-            distance = manhattan_distance(sensor, beacon)
-            new_excluded_range = single_row_exclusion(sensor, distance, y, False)
-            if new_excluded_range:
-                excluded.append(new_excluded_range)
-        excluded = sorted(excluded)
-        max_excluded_x = 0
-        for tuple_range in excluded:
-            if tuple_range[0] > max_excluded_x + 1:
-                return (tuple_range[0] - 1)*4000000 + y
-            max_excluded_x = max(max_excluded_x, tuple_range[1])
-            if max_excluded_x > x_y_max:
-                break
-    return None
+    polygons = unary_union(construct_polygons(path))
+    grid = Polygon([(0, 0), (0, x_y_max), (x_y_max, x_y_max), (x_y_max, 0)])
+    polygons_on_grid = grid.intersection(polygons)
+    distress_beacon = grid.difference(polygons_on_grid)
+    x, y = distress_beacon.convex_hull.exterior.coords.xy
+    return int(x[0]) * 4000000 + int(y[1])
