@@ -54,10 +54,10 @@ def find_distress_beacon(path, x_y_max):
                 excluded.append(new_excluded_range)
         excluded = sorted(excluded)
         max_excluded_x = 0
-        for start, end in excluded:
-            if start > max_excluded_x + 1:
-                return (start - 1)*4000000 + y
-            max_excluded_x = max(max_excluded_x, end)
+        for tuple_range in excluded:
+            if tuple_range[0] > max_excluded_x + 1:
+                return (tuple_range[0] - 1)*4000000 + y
+            max_excluded_x = max(max_excluded_x, tuple_range[1])
             if max_excluded_x > x_y_max:
                 break
     return None
