@@ -1,5 +1,5 @@
 from re import findall
-from shapely import Polygon, LineString, unary_union
+from shapely import Polygon, MultiPolygon, LineString, unary_union
 
 
 def manhattan_distance(first, second):
@@ -49,5 +49,6 @@ def find_distress_beacon(path, x_y_max):
     grid = Polygon([(0, 0), (0, x_y_max), (x_y_max, x_y_max), (x_y_max, 0)])
     polygons_on_grid = grid.intersection(polygons)
     distress_beacon = grid.difference(polygons_on_grid)
-    x, y = distress_beacon.convex_hull.exterior.coords.xy
-    return int(x[0]) * 4000000 + int(y[1])
+    distress_beacon = distress_beacon.geoms[0] if isinstance(distress_beacon, MultiPolygon) else distress_beacon
+    x, y = distress_beacon.centroid.coords.xy
+    return int(x[0]) * 4000000 + int(y[0])
