@@ -23,7 +23,7 @@ def compute_single_row_exclusion(path, row):
         excluded = list()
         included = set()
         for line in file:
-            positions = findall(r'-?\d+',line)
+            positions = findall(r'-?\d+', line)
             sensor = int(positions[0])+int(positions[1])*1j
             beacon = int(positions[2])+int(positions[3])*1j
             if int(beacon.imag) == row:
@@ -42,7 +42,7 @@ def find_distress_beacon(path, x_y_max):
     beacons = []
     with open(path) as file:
         for line in file:
-            positions = findall(r'-?\d+',line)
+            positions = findall(r'-?\d+', line)
             sensors.append(int(positions[0])+int(positions[1])*1j)
             beacons.append(int(positions[2])+int(positions[3])*1j)
     for y in range(x_y_max+1):
