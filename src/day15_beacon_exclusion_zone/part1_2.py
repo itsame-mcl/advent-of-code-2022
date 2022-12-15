@@ -6,18 +6,6 @@ def manhattan_distance(first, second):
     return int(abs(second.real - first.real) + abs(second.imag - first.imag))
 
 
-def single_row_exclusion(sensor, distance, row, output_as_range=True):
-    row_distance = int(abs(row - sensor.imag))
-    col_distance = max(distance - row_distance, -1)
-    if col_distance > -1:
-        if output_as_range:
-            return range(int(sensor.real)-col_distance, int(sensor.real)+col_distance+1)
-        else:
-            return int(sensor.real)-col_distance, int(sensor.real)+col_distance
-    else:
-        return None
-
-
 def construct_polygons(path):
     polygons = list()
     with open(path) as file:
