@@ -40,12 +40,13 @@ def release_most_pressure(path, elephant=False):
     graph = create_graph(path)
     distances = dict(nx.shortest_path_length(graph))
     valves = [(node[0], node[1]['rate']) for node in graph.nodes.data() if node[1]['rate'] > 0]
-    if not elephant:
-        max_final_pressure = explore_all_options("AA", 0, 0, valves, distances, 30)
-    else:
-        max_final_pressure = 0
+    max_final_pressure = explore_all_options("AA", 0, 0, valves, distances, 30)
+    if elephant:
         for number_of_valves_for_elephant in range(1, len(valves)//2+1):
             valves_for_elephant_comb = combinations(valves, number_of_valves_for_elephant)
+            if number_of_valves_for_elephant == len(valves)//2:
+                valves_for_elephant_comb = list(valves_for_elephant_comb)
+                valves_for_elephant_comb = valves_for_elephant_comb[:len(valves_for_elephant_comb)//2]
             for valves_for_elephant in valves_for_elephant_comb:
                 valves_for_elephant = [*valves_for_elephant]
                 max_final_pressure_elephant = explore_all_options("AA", 0, 0, valves_for_elephant, distances, 26)

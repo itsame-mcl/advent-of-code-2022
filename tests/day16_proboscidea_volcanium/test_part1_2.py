@@ -19,7 +19,7 @@ class TestDay16(unittest.TestCase):
         res = release_most_pressure(os.path.join(self.dirname, "sample_part1_2.txt"), True)
         self.assertEqual(1707, res)
 
-    @unittest.skip("Too long to compute (~ 1 mn)")
+    @unittest.skip("Quite long to compute (~ 45 sec)")
     def test_part2_with_input(self):
         res = release_most_pressure(os.path.join(self.dirname, "input_part1_2.txt"), True)
         self.assertEqual(2741, res)
