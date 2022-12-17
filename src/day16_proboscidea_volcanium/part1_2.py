@@ -44,7 +44,7 @@ def release_most_pressure(path, elephant=False):
     if elephant:
         for number_of_valves_for_elephant in range(1, len(valves)//2+1):
             valves_for_elephant_comb = combinations(valves, number_of_valves_for_elephant)
-            if number_of_valves_for_elephant == len(valves)//2:
+            if number_of_valves_for_elephant == len(valves) - number_of_valves_for_elephant:
                 valves_for_elephant_comb = list(valves_for_elephant_comb)
                 valves_for_elephant_comb = valves_for_elephant_comb[:len(valves_for_elephant_comb)//2]
             for valves_for_elephant in valves_for_elephant_comb:
