@@ -1,8 +1,4 @@
-from itertools import islice
-
-
 def generate_rocks(shape, top_line):
-    rocks = None
     match shape:
         case '-':
             rocks = {3+(top_line+4)*1j, 4+(top_line+4)*1j, 5+(top_line+4)*1j, 6+(top_line+4)*1j}
@@ -12,7 +8,7 @@ def generate_rocks(shape, top_line):
             rocks = {3+(top_line+4)*1j, 4+(top_line+4)*1j, 5+(top_line+4)*1j, 5+(top_line+5)*1j, 5+(top_line+6)*1j}
         case 'I':
             rocks = {3+(top_line+4)*1j, 3+(top_line+5)*1j, 3+(top_line+6)*1j, 3+(top_line+7)*1j}
-        case 'O':
+        case _:
             rocks = {3+(top_line+4)*1j, 4+(top_line+4)*1j, 3+(top_line+5)*1j, 4+(top_line+5)*1j}
     return rocks
 
@@ -30,6 +26,8 @@ def lateral_move(current_rocks, new_rocks, lateral_direction):
             if max({rock.real for rock in new_rocks_candidate}) <= 7 and len(
                     current_rocks.intersection(new_rocks_candidate)) == 0:
                 final_rocks = new_rocks_candidate
+        case _:
+            raise ValueError
     return final_rocks
 
 
