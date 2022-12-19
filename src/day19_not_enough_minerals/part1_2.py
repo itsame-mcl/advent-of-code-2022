@@ -21,8 +21,6 @@ def prune_options(inventory: Inventory, blueprint: Blueprint, options: List[Unio
         options.remove(None)
         if Robot.ORE in options:
             options.remove(Robot.ORE)
-    if inventory.obsidian_robot >= blueprint.obsidian_for_geode_robot and Robot.OBSIDIAN in options:
-        options.remove(Robot.OBSIDIAN)
     if inventory.clay_robot >= blueprint.clay_for_obsidian_robot and Robot.CLAY in options:
         options.remove(Robot.CLAY)
     if inventory.ore_robot >= blueprint.max_ore_cost and Robot.ORE in options:
@@ -33,27 +31,18 @@ def prune_options(inventory: Inventory, blueprint: Blueprint, options: List[Unio
     return options
 
 
-def maximize_geodes(inventory: Inventory, blueprint: Blueprint, minutes_left, skipped=None, current_max=0):
-    if skipped is None:
-        skipped = []
+def maximize_geodes(inventory: Inventory, blueprint: Blueprint, minutes_left):
     max_geodes = inventory.geode
-    upper_geodes_bound = inventory.geode + inventory.geode_robot * minutes_left + minutes_left*(minutes_left+1)/2
-    if upper_geodes_bound < current_max:
-        return 0
     if minutes_left > 0:
         options = prune_options(inventory, blueprint, inventory.can_afford(blueprint))
-        for options_skipped in skipped:
-            options.remove(options_skipped)
         inventory.collect_minerals()
         for option in options:
             new_inventory = replace(inventory)
             if option is not None:
                 new_inventory.buy_robot(option, blueprint)
-            else:
-                skipped = options[:].remove(None)
-            final_geodes_with_buy = maximize_geodes(new_inventory, blueprint, minutes_left-1, skipped, max_geodes)
-            if final_geodes_with_buy > max_geodes:
-                max_geodes = final_geodes_with_buy
+            final_geodes_with_option = maximize_geodes(new_inventory, blueprint, minutes_left-1)
+            if final_geodes_with_option > max_geodes:
+                max_geodes = final_geodes_with_option
     return max_geodes
 
 
