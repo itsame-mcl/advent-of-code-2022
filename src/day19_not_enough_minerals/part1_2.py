@@ -1,4 +1,5 @@
 from src.day19_not_enough_minerals.data_model import Robot, Blueprint, Inventory
+from typing import List, Union
 from copy import copy
 from re import findall
 
@@ -12,7 +13,14 @@ def get_blueprints(path):
     return blueprints
 
 
-def prune_options(inventory: Inventory, blueprint: Blueprint, options):
+def prune_options(inventory: Inventory, blueprint: Blueprint, options: List[Union[Robot, None]]) ->\
+        List[Union[Robot, None]]:
+    if Robot.GEODE in options:
+        options = [Robot.GEODE]
+    elif Robot.OBSIDIAN in options:
+        options.remove(None)
+        if Robot.ORE in options:
+            options.remove(Robot.ORE)
     if inventory.obsidian_robot >= blueprint.obsidian_for_geode_robot and Robot.OBSIDIAN in options:
         options.remove(Robot.OBSIDIAN)
     if inventory.clay_robot >= blueprint.clay_for_obsidian_robot and Robot.CLAY in options:
@@ -20,6 +28,7 @@ def prune_options(inventory: Inventory, blueprint: Blueprint, options):
     if inventory.ore_robot >= blueprint.max_ore_cost and Robot.ORE in options:
         options.remove(Robot.ORE)
     if inventory.ore >= blueprint.max_ore_cost and None in options:
+        # noinspection PyTypeChecker
         options.remove(None)
     return options
 
@@ -46,46 +55,6 @@ def maximize_geodes(inventory: Inventory, blueprint: Blueprint, minutes_left, sk
             if final_geodes_with_buy > max_geodes:
                 max_geodes = final_geodes_with_buy
     return max_geodes
-
-
-def prune_states(states, blueprint, remaining_time):
-    max_useful_ore = blueprint.max_ore_cost * remaining_time
-    max_useful_clay = blueprint.clay_for_obsidian_robot * remaining_time
-    max_useful_obisidian = blueprint.obsidian_for_geode_robot * remaining_time
-    current_max_geode = max([state.geode for state in states])
-    best_geode_increase = remaining_time + remaining_time*(remaining_time+1)/2
-    selected_states = []
-    for state in states:
-        if state.ore + state.ore_robot * remaining_time >= max_useful_ore:
-            state.ore = max_useful_ore
-        if state.clay + state.clay_robot * remaining_time >= max_useful_clay:
-            state.clay = max_useful_clay
-        if state.obsidian + state.obsidian_robot * remaining_time >= max_useful_obisidian:
-            state.obsidian = max_useful_obisidian
-    states.sort(reverse=True)
-    for i in range(len(states)):
-        state = states[i]
-        can_beat_max = state.geode + state.geode_robot * remaining_time + best_geode_increase > current_max_geode
-        if can_beat_max and all([state > other for other in states[i+1:]]):
-            selected_states.append(state)
-    return selected_states
-
-
-def maximize_geodes_by_time(blueprint: Blueprint, duration):
-    states = [Inventory()]
-    for i in range(1, duration+1):
-        new_states = []
-        for state in states:
-            options = prune_options(state, blueprint, state.can_afford(blueprint))
-            state.collect_minerals()
-            for option in options:
-                new_inventory = copy(state)
-                if option is not None:
-                    new_inventory.buy_robot(option, blueprint)
-                new_states.append(new_inventory)
-        pruned = prune_states(new_states, blueprint, duration-i)
-        states = pruned
-    return max([state.geode for state in states])
 
 
 def maximize_for_all_blueprints(path, slicing=None, depth=24):

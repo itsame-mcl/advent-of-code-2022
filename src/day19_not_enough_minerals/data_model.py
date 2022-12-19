@@ -1,6 +1,5 @@
 from enum import Enum
 from dataclasses import dataclass, field
-from functools import total_ordering
 
 
 class Robot(Enum):
@@ -27,7 +26,6 @@ class Blueprint:
 
 
 @dataclass
-@total_ordering
 class Inventory:
     ore: int = 0
     clay: int = 0
@@ -64,7 +62,7 @@ class Inventory:
                 self.clay -= blueprint.clay_for_obsidian_robot
                 self.obsidian_robot += 1
             case Robot.GEODE:
-                self.ore -= blueprint.ore_for_obsidian_robot
+                self.ore -= blueprint.ore_for_geode_robot
                 self.obsidian -= blueprint.obsidian_for_geode_robot
                 self.geode_robot += 1
 
@@ -73,15 +71,3 @@ class Inventory:
         self.clay += self.clay_robot
         self.obsidian += self.obsidian_robot
         self.geode += self.geode_robot
-
-    def __lt__(self, other):
-        le_ore_robot = self.ore_robot <= other.ore_robot
-        le_clay_robot = self.clay_robot <= other.clay_robot
-        le_obsidian_robot = self.obsidian_robot <= other.obsidian_robot
-        le_geode_robot = self.geode_robot <= other.geode_robot
-        lt_ore = self.ore < other.ore
-        lt_clay = self.clay < other.clay
-        lt_obsidian = self.obsidian < other.obsidian
-        lt_geode = self.geode < other.geode
-        return all([le_ore_robot, le_clay_robot, le_obsidian_robot, le_geode_robot,
-                    lt_ore, lt_clay, lt_obsidian, lt_geode])
