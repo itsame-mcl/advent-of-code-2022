@@ -13,15 +13,6 @@ def get_neighbors(cube):
             (cube[0], cube[1], cube[2]+1), (cube[0], cube[1], cube[2]-1)}
 
 
-def obsidian_surface(path):
-    cubes = get_cubes(path)
-    surface = 0
-    for cube in cubes:
-        neighbors = get_neighbors(cube)
-        surface += 6 - len(cubes.intersection(neighbors))
-    return surface
-
-
 def get_bounds(lava):
     x_min = min(cube[0] for cube in lava)
     y_min = min(cube[1] for cube in lava)
@@ -32,7 +23,7 @@ def get_bounds(lava):
     return x_min, x_max, y_min, y_max, z_min, z_max
 
 
-def initial_water(x_min, x_max, y_min, y_max, z_min, z_max):
+def setup_flood(x_min, x_max, y_min, y_max, z_min, z_max):
     water = set()
     for x in range(x_min-1, x_max+2):
         water.add((x, y_min, z_min))
@@ -52,9 +43,9 @@ def initial_water(x_min, x_max, y_min, y_max, z_min, z_max):
     return water
 
 
-def flood_fill(lava):
+def compute_concave_hull(lava):
     bounds = get_bounds(lava)
-    water = initial_water(*bounds)
+    water = setup_flood(*bounds)
     water_len = 0
     while len(water) != water_len:
         water_len = len(water)
@@ -72,13 +63,15 @@ def flood_fill(lava):
     return water
 
 
-def obsidian_exterior_surface(path):
+def obsidian_surface(path, concave_hull=False):
     lava = get_cubes(path)
-    water = flood_fill(lava)
+    if concave_hull:
+        water = compute_concave_hull(lava)
     surface = 0
     for cube in lava:
         neighbors = get_neighbors(cube)
-        for neighbor in neighbors:
-            if neighbor in water:
-                surface += 1
+        if concave_hull:
+            surface += len(water.intersection(neighbors))
+        else:
+            surface += 6 - len(lava.intersection(neighbors))
     return surface

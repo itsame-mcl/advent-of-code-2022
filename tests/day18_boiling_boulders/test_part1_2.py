@@ -1,6 +1,6 @@
 import unittest
 import os
-from src.day18_boiling_boulders.part1_2 import obsidian_surface, obsidian_exterior_surface
+from src.day18_boiling_boulders.part1_2 import obsidian_surface
 
 
 class TestDay18(unittest.TestCase):
@@ -16,11 +16,11 @@ class TestDay18(unittest.TestCase):
         self.assertEqual(3610, res)
 
     def test_part2_with_sample(self):
-        res = obsidian_exterior_surface(os.path.join(self.dirname, "sample_part1_2.txt"))
+        res = obsidian_surface(os.path.join(self.dirname, "sample_part1_2.txt"), True)
         self.assertEqual(58, res)
 
     def test_part2_with_input(self):
-        res = obsidian_exterior_surface(os.path.join(self.dirname, "input_part1_2.txt"))
+        res = obsidian_surface(os.path.join(self.dirname, "input_part1_2.txt"), True)
         self.assertEqual(2082, res)
 
 
