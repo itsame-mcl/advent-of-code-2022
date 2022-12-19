@@ -65,6 +65,8 @@ class Inventory:
                 self.ore -= blueprint.ore_for_geode_robot
                 self.obsidian -= blueprint.obsidian_for_geode_robot
                 self.geode_robot += 1
+            case _:
+                raise TypeError
 
     def collect_minerals(self):
         self.ore += self.ore_robot

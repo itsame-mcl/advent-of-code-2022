@@ -1,6 +1,6 @@
 from src.day19_not_enough_minerals.data_model import Robot, Blueprint, Inventory
 from typing import List, Union
-from copy import copy
+from dataclasses import replace
 from re import findall
 
 
@@ -46,7 +46,7 @@ def maximize_geodes(inventory: Inventory, blueprint: Blueprint, minutes_left, sk
             options.remove(options_skipped)
         inventory.collect_minerals()
         for option in options:
-            new_inventory = copy(inventory)
+            new_inventory = replace(inventory)
             if option is not None:
                 new_inventory.buy_robot(option, blueprint)
             else:
