@@ -18,7 +18,7 @@ def mix_encrypted_input(encrypted_input, current_mix):
         initial_index = current_mix.index(data_point)
         final_index = (initial_index + data_point.value) % (message_length - 1)
         del current_mix[initial_index]
-        current_mix.insert(final_index if final_index else message_length, data_point)
+        current_mix.insert(final_index, data_point)
     return current_mix
 
 
