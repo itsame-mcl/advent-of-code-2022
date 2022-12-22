@@ -77,8 +77,8 @@ def move(start: complex, direction: complex, tiles: set[complex], walls: set[com
     if final not in tiles.union(walls):
         final = wrap(final, direction, tiles, walls)
     if final in tiles:
-        return final
-    return start
+        return final, direction
+    return start, direction
 
 
 def move_around_cube(start: complex, direction: complex, tiles: set[complex], walls: set[complex], cube):
@@ -95,15 +95,13 @@ def move_around_cube(start: complex, direction: complex, tiles: set[complex], wa
 def follow_movement_instruction(position, direction, iterations, tiles, walls, cube):
     for _ in range(int(iterations)):
         if not cube:
-            new_position = move(position, direction, tiles, walls)
+            new_position, new_direction = move(position, direction, tiles, walls)
         else:
             new_position, new_direction = move_around_cube(position, direction, tiles, walls, cube)
         if new_position == position:
             break
         else:
-            position = new_position
-            if cube:
-                direction = new_direction
+            position, direction = new_position, new_direction
     return position, direction
 
 
