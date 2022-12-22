@@ -1,0 +1,7 @@
+anytree
+parameterized
+parse
+networkx
+numpy
+shapely
+z3-solver
