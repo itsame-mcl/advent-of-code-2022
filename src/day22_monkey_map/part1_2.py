@@ -1,23 +1,6 @@
 from re import findall
 
 
-def offset_and_get_face(position, cube):
-    for face in cube.keys():
-        position_offset = position - face
-        if 0 <= position_offset.real < cube[face]['size'] and 0 <= position_offset.imag < cube[face]['size']:
-            return position_offset, cube[face]
-
-
-def rotate_and_move_to_another_face(position_offset, direction, face):
-    corrections = {1: -face['size'], 1j: -face['size']*1j, -1: face['size'], -1j: face['size']*1j}
-    center = ((face['size'] - 1) / 2 + ((face['size'] - 1) / 2) * 1j)
-    position_centered = position_offset - center
-    destination_offset, rotation = face[direction]
-    direction_after_rotation = direction * rotation
-    position_after_rotation = (position_centered * rotation) + center + destination_offset + corrections[direction_after_rotation]
-    return position_after_rotation, direction_after_rotation
-
-
 def parse_map_line(line, y):
     tiles = set()
     walls = set()
@@ -50,6 +33,13 @@ def parse_input(path):
     return tiles, walls, pattern
 
 
+def offset_and_get_face(position, cube):
+    for face in cube.keys():
+        position_offset = position - face
+        if 0 <= position_offset.real < cube[face]['size'] and 0 <= position_offset.imag < cube[face]['size']:
+            return position_offset, cube[face]
+
+
 def wrap(position: complex, direction: complex, tiles: set[complex], walls: set[complex]):
     board = tiles.union(walls)
     match direction:
@@ -59,9 +49,20 @@ def wrap(position: complex, direction: complex, tiles: set[complex], walls: set[
             final = max([tile.real for tile in board if tile.imag == position.imag]) + position.imag * 1j
         case 1j:
             final = position.real + min([tile.imag for tile in board if tile.real == position.real]) * 1j
-        case - 1j:
+        case _:
             final = position.real + max([tile.imag for tile in board if tile.real == position.real]) * 1j
     return final
+
+
+def rotate_and_move_to_another_face(position_offset, direction, face):
+    corrections = {1: -face['size'], 1j: -face['size']*1j, -1: face['size'], -1j: face['size']*1j}
+    center = ((face['size'] - 1) / 2 + ((face['size'] - 1) / 2) * 1j)
+    position_centered = position_offset - center
+    destination_offset, rotation = face[direction]
+    direction_after_rotation = direction * rotation
+    position_after_rotation = (position_centered * rotation) + center +\
+        destination_offset + corrections[direction_after_rotation]
+    return position_after_rotation, direction_after_rotation
 
 
 def proceed_around_cube(position: complex, direction: complex, cube):
@@ -90,6 +91,21 @@ def move_around_cube(start: complex, direction: complex, tiles: set[complex], wa
     return start, direction
 
 
+def follow_movement_instruction(position, direction, iterations, tiles, walls, cube):
+    for _ in range(int(iterations)):
+        if not cube:
+            new_position = move(position, direction, tiles, walls)
+        else:
+            new_position, new_direction = move_around_cube(position, direction, tiles, walls, cube)
+        if new_position == position:
+            break
+        else:
+            position = new_position
+            if cube:
+                direction = new_direction
+    return position, direction
+
+
 def follow_directions(path, cube=None):
     tiles, walls, pattern = parse_input(path)
     position = min([tile.real for tile in tiles if tile.imag == 1]) + 1j
@@ -101,15 +117,5 @@ def follow_directions(path, cube=None):
         elif instruction == 'L':
             direction = direction * -1j
         else:
-            for _ in range(int(instruction)):
-                if not cube:
-                    new_position = move(position, direction, tiles, walls)
-                else:
-                    new_position, new_direction = move_around_cube(position, direction, tiles, walls, cube)
-                if new_position == position:
-                    break
-                else:
-                    position = new_position
-                    if cube:
-                        direction = new_direction
+            position, direction = follow_movement_instruction(position, direction, instruction, tiles, walls, cube)
     return position.imag * 1000 + position.real * 4 + facing[direction]
