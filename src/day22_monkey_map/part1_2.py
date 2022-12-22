@@ -38,6 +38,7 @@ def offset_and_get_face(position, cube):
         position_offset = position - face
         if 0 <= position_offset.real < cube[face]['size'] and 0 <= position_offset.imag < cube[face]['size']:
             return position_offset, cube[face]
+    raise KeyError
 
 
 def wrap(position: complex, direction: complex, tiles: set[complex], walls: set[complex]):

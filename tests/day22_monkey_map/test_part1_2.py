@@ -15,6 +15,10 @@ class TestDay22(unittest.TestCase):
         res = follow_directions(os.path.join(self.dirname, "input_part1_2.txt"))
         self.assertEqual(149138, res)
 
+    def test_part2_with_invalid_cube(self):
+        cube = {51+51j: {'size': 4, -1j: (1+5j, -1), 1: (13+9j, -1), -1: (5+5j, -1j)}}
+        self.assertRaises(KeyError, follow_directions, os.path.join(self.dirname, "sample_part1_2.txt"), cube)
+
     def test_part2_with_sample(self):
         cube = {9+1j: {'size': 4, -1j: (1+5j, -1), 1: (13+9j, -1), -1: (5+5j, -1j)},
                 1+5j: {'size': 4, -1j: (9+1j, -1), -1: (13+9j, 1j), 1j: (9+9j, -1)},
