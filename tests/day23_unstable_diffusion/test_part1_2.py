@@ -21,10 +21,6 @@ class TestDay22(unittest.TestCase):
         res = do_rounds_and_compute_empty_tiles(os.path.join(self.dirname, "input_part1_2.txt"))
         self.assertEqual(4162, res)
 
-    def test_part2_with_small_sample(self):
-        res = do_complete_simulation_and_compute_rounds(os.path.join(self.dirname, "small_sample_part1_2.txt"))
-        self.assertEqual(4, res)
-
     def test_part2_with_sample(self):
         res = do_complete_simulation_and_compute_rounds(os.path.join(self.dirname, "sample_part1_2.txt"))
         self.assertEqual(20, res)

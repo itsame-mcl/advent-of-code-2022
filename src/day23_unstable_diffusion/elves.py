@@ -1,4 +1,4 @@
-from collections import namedtuple
+from collections import namedtuple, Counter
 
 Proposition = namedtuple("Proposition", "elf position")
 
@@ -72,15 +72,9 @@ class ElvesController:
 
     @staticmethod
     def __prune_propositions(propositions: list[Proposition]):
-        pruned_propositions = []
-        rejected_positions = set()
-        for proposition in propositions:
-            if proposition.position in rejected_positions:
-                continue
-            if len([other for other in propositions if proposition.position == other.position]) == 1:
-                pruned_propositions.append(proposition)
-            else:
-                rejected_positions.add(proposition.position)
+        proposed_positions = Counter([proposition.position for proposition in propositions])
+        pruned_propositions = [proposition for proposition in propositions
+                               if proposed_positions[proposition.position] == 1]
         return pruned_propositions
 
     @staticmethod
