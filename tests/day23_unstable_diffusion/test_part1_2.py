@@ -3,7 +3,7 @@ import os
 from src.day23_unstable_diffusion.spreading_elves import SpreadingElves
 
 
-class TestDay22(unittest.TestCase):
+class TestDay23(unittest.TestCase):
     def setUp(self):
         self.dirname = os.path.dirname(__file__)
 
