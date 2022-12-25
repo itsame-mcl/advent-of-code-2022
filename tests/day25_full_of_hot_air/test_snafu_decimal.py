@@ -20,6 +20,7 @@ class TestDay25(unittest.TestCase):
         self.assertEqual('20', decimal_to_snafu(10))
         self.assertEqual('1=0', decimal_to_snafu(15))
         self.assertEqual('1-0', decimal_to_snafu(20))
+        self.assertEqual('10-', decimal_to_snafu(24))
         self.assertEqual('1=11-2', decimal_to_snafu(2022))
         self.assertEqual('1-0---0', decimal_to_snafu(12345))
         self.assertEqual('1121-1110-1=0', decimal_to_snafu(314159265))
