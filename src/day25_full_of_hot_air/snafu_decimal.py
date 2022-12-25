@@ -16,8 +16,6 @@ def decimal_to_snafu(number):
     on_snafu = ''
     for i in range(1, len(on_base_5) + 1):
         match on_base_5[-i]:
-            case '0' | '1' | '2':
-                on_snafu = on_base_5[-i] + on_snafu
             case '3':
                 if i < len(on_base_5):
                     on_snafu = '=' + on_snafu
@@ -36,6 +34,8 @@ def decimal_to_snafu(number):
                     on_base_5[-i - 1] = str(int(on_base_5[-i - 1]) + 1)
                 else:
                     on_snafu = '10' + on_snafu
+            case _:
+                on_snafu = on_base_5[-i] + on_snafu
     return on_snafu
 
 
