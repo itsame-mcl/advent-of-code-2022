@@ -7,8 +7,7 @@ GOAL = -2-2j
 
 def create_graph_nodes(path):
     graph = nx.DiGraph()
-    graph.add_node(START, status='start')
-    graph.add_node(GOAL, status='goal')
+    nodes = [(START, {'status': 'start'}), (GOAL, {'status': 'goal'})]
     with open(path) as file:
         lines = file.readlines()
     x_max = len(lines[0]) - 3
@@ -20,26 +19,27 @@ def create_graph_nodes(path):
         for char in line:
             match char:
                 case '.':
-                    graph.add_node(position+0j, status='land',
-                                   wind={'^': False, '>': False, 'v': False, '<': False})
+                    nodes.append((position+0j, {'status': 'land',
+                                                'wind': {'^': False, '>': False, 'v': False, '<': False}}))
                 case '^':
-                    graph.add_node(position+0j, status='blizzard',
-                                   wind={'^': True, '>': False, 'v': False, '<': False})
+                    nodes.append((position+0j, {'status': 'blizzard',
+                                                'wind': {'^': True, '>': False, 'v': False, '<': False}}))
                 case '>':
-                    graph.add_node(position+0j, status='blizzard',
-                                   wind={'^': False, '>': True, 'v': False, '<': False})
+                    nodes.append((position+0j, {'status': 'blizzard',
+                                                'wind': {'^': False, '>': True, 'v': False, '<': False}}))
                 case 'v':
-                    graph.add_node(position+0j, status='blizzard',
-                                   wind={'^': False, '>': False, 'v': True, '<': False})
+                    nodes.append((position+0j, {'status': 'blizzard',
+                                                'wind': {'^': False, '>': False, 'v': True, '<': False}}))
                 case '<':
-                    graph.add_node(position+0j, status='blizzard',
-                                   wind={'^': False, '>': False, 'v': False, '<': True})
+                    nodes.append((position+0j, {'status': 'blizzard',
+                                                'wind': {'^': False, '>': False, 'v': False, '<': True}}))
                 case _:
                     continue  # If it's a wall, do nothing
             for state in range(1, states):
-                graph.add_node(position + state*1j, status='land',
-                               wind={'^': False, '>': False, 'v': False, '<': False})
+                nodes.append((position + state*1j, {'status': 'land',
+                                                    'wind': {'^': False, '>': False, 'v': False, '<': False}}))
             position += 1
+    graph.add_nodes_from(nodes)
     return graph, x_max, y_max, states
 
 
@@ -100,20 +100,20 @@ def get_next_options(node, x_max, y_max, states):
 
 
 def add_edges_to_graph(graph, x_max, y_max, states):
+    edges = []
     for node in graph.nodes:
         if node in [START, GOAL]:
             continue
         if node.real == 0:
-            graph.add_edge(node, (node.real + 1 + ((node.imag + 1) % states) * 1j))
-            graph.add_edge(node, START)
+            edges.extend([(node, (node.real + 1 + ((node.imag + 1) % states) * 1j)), (node, START)])
         elif node.real == (x_max * y_max) + 1:
-            graph.add_edge(node, (node.real - 1 + ((node.imag + 1) % states) * 1j))
-            graph.add_edge(node, GOAL)
+            edges.extend([(node, (node.real - 1 + ((node.imag + 1) % states) * 1j)), (node, GOAL)])
         else:
             options = get_next_options(node, x_max, y_max, states)
             for option in options:
                 if option and graph.nodes[option]['status'] == 'land':
-                    graph.add_edge(node, option)
+                    edges.append((node, option))
+    graph.add_edges_from(edges)
     return graph
 
 

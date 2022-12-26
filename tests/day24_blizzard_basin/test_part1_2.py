@@ -11,6 +11,7 @@ class TestDay24(unittest.TestCase):
         res = find_shortest_path(os.path.join(self.dirname, "sample_part1_2.txt"))
         self.assertEqual(18, res)
 
+    @unittest.skip('Quite long to compute (~ 30 sec) and included into part 2')
     def test_part1_with_input(self):
         res = find_shortest_path(os.path.join(self.dirname, "input_part1_2.txt"))
         self.assertEqual(230, res)
